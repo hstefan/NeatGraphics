@@ -1,2 +1,9 @@
-add_executable(NeatGraphics main.cpp)
+set(SOURCE
+  main.cpp
+)
+
+set(HEADER
+)
+
+add_executable(NeatGraphics ${SOURCE} ${HEADER})
 target_link_libraries(NeatGraphics  ${OPENGL_LIBRARIES} ${GLFW_LIBRARIES} gl3w)
