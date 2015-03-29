@@ -25,7 +25,7 @@ GLuint make_triangle() {
   GLuint VBO;
   glGenBuffers(1, &VBO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(float), &Vertices[0], GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices.data(), GL_STATIC_DRAW);
   return VBO;
 }
 
@@ -35,34 +35,23 @@ bool check_and_report_shader_compile(const GLuint shader) {
   if (Status == GL_FALSE) {
     auto MsgBuffer = std::array<char, 512>();
     glGetShaderInfoLog(shader, MsgBuffer.size(), nullptr, &MsgBuffer[0]);
-    std::cerr << &MsgBuffer[0] << std::endl;
+    std::cerr << MsgBuffer.data() << std::endl;
   }
   return Status == GL_TRUE;
 }
 
-GLuint make_vertex_shader(std::string sourcePath) {
-  auto VertexShader = glCreateShader(GL_VERTEX_SHADER);
+
+GLuint make_shader(GLenum shaderType, std::string sourcePath) {
+  auto Shader = glCreateShader(shaderType);
   const auto ShaderSource = get_file_contents(sourcePath);
   const auto ShaderContent = ShaderSource.c_str();
 
-  glShaderSource(VertexShader, 1, &ShaderContent, nullptr);
-  glCompileShader(VertexShader);
+  glShaderSource(Shader, 1, &ShaderContent, nullptr);
+  glCompileShader(Shader);
 
-  check_and_report_shader_compile(VertexShader);
+  check_and_report_shader_compile(Shader);
 
-  return VertexShader;
-}
-
-GLuint make_fragment_shader(std::string sourcePath) {
-  auto FragShader = glCreateShader(GL_FRAGMENT_SHADER);
-  const auto ShaderSource = get_file_contents(sourcePath);
-  const auto ShaderContent = ShaderSource.c_str();
-  glShaderSource(FragShader, 1, &ShaderContent, nullptr);
-  glCompileShader(FragShader);
-
-  check_and_report_shader_compile(FragShader);
-  
-  return FragShader;
+  return Shader;
 }
 
 GLuint make_program(GLuint vertexShader, GLuint fragmentShader) {
@@ -78,7 +67,7 @@ GLuint make_program(GLuint vertexShader, GLuint fragmentShader) {
   if (Status == GL_FALSE) {
     auto MsgBuffer = std::array<char, 512>();
     glGetProgramInfoLog(ShaderProgram, MsgBuffer.size(), nullptr, &MsgBuffer[0]);
-    std::cerr << &MsgBuffer[0] << std::endl;
+    std::cerr << MsgBuffer.data() << std::endl;
   }
 
   auto PosAttrib = glGetAttribLocation(ShaderProgram, "position");
@@ -114,8 +103,8 @@ int main() {
   glBindVertexArray(VAO);
 
   const auto TriangleVBO = make_triangle();
-  const auto VertexShader = make_vertex_shader("resources/vertex.glsl");
-  const auto FragShader = make_fragment_shader("resources/frag.glsl");
+  const auto VertexShader = make_shader(GL_VERTEX_SHADER, "resources/vertex.glsl");
+  const auto FragShader = make_shader(GL_FRAGMENT_SHADER, "resources/frag.glsl");
   const auto ShaderProgram = make_program(VertexShader, FragShader);
   
   glBindBuffer(GL_ARRAY_BUFFER, TriangleVBO);
