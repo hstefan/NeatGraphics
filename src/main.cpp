@@ -1,10 +1,8 @@
 #include <iostream>
-#include <thread>
 #include <array>
 #include <string>
 #include <fstream>
 #include <streambuf>
-#include <chrono>
 #include <cmath>
 #include "GL/gl3w.h"
 #include "GLFW/glfw3.h"
@@ -21,9 +19,10 @@ std::string get_file_contents(std::string filename) {
 }
 
 GLuint make_triangle() {
-	static auto Vertices = std::array < float, 6 > {{ 0.0f, 0.5f,
-		0.5f, -0.5f,
-		-0.5f, -0.5f }};
+	static auto Vertices = std::array<float, 15>{{
+		0.0f, 0.5f, 1.f, 0.f, 0.f,
+		0.5f, -0.5f, 0.f, 1.f, 0.f,
+		-0.5f, -0.5f, 0.f, 0.f, 1.f }};
 	GLuint VBO;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -73,9 +72,13 @@ GLuint make_program(GLuint vertexShader, GLuint fragmentShader) {
 	}
 
 	auto PosAttrib = glGetAttribLocation(ShaderProgram, "position");
-	glVertexAttribPointer(PosAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(PosAttrib);
-
+	glVertexAttribPointer(PosAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+	
+	auto ColorAttrib = glGetAttribLocation(ShaderProgram, "color");
+	glEnableVertexAttribArray(ColorAttrib);
+	glVertexAttribPointer(ColorAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
+		(void*)(2 * sizeof(float)));
 	return ShaderProgram;
 }
 
@@ -111,19 +114,10 @@ int main() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, TriangleVBO);
 	glUseProgram(ShaderProgram);
-	
-	auto UniColor = glGetUniformLocation(ShaderProgram, "triangleColor");
-
-	auto TStart = std::chrono::high_resolution_clock::now();
 
 	while (!glfwWindowShouldClose(Window)) {
-		auto TNow = std::chrono::high_resolution_clock::now();
-		auto Time = std::chrono::duration_cast<std::chrono::duration<float>>(TNow - TStart).count();
-
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		glUniform3f(UniColor, std::sin(Time * 4.f) + 1.f, 0.f, 0.f);
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
