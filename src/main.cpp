@@ -19,10 +19,12 @@ std::string get_file_contents(std::string filename) {
 }
 
 GLuint make_triangle() {
-	static auto Vertices = std::array<float, 15>{{
-		0.0f, 0.5f, 1.f, 0.f, 0.f,
-		0.5f, -0.5f, 0.f, 1.f, 0.f,
-		-0.5f, -0.5f, 0.f, 0.f, 1.f }};
+	static auto Vertices = std::array<float, 20> {{
+		-0.5f, 0.5f, 1.0f, 0.0f, 0.0f, //top-left
+		0.5f,  0.5f, 0.0f, 1.0f, 0.0f, //top-right
+		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, //bottom-right
+		-0.5f, -0.5f, 1.0f, 1.0f, 1.0f, //bottom-left
+	}};
 	GLuint VBO;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -112,6 +114,14 @@ int main() {
 	const auto FragShader = make_shader(GL_FRAGMENT_SHADER, "resources/frag.glsl");
 	const auto ShaderProgram = make_program(VertexShader, FragShader);
 
+	GLuint EBO;
+	glGenBuffers(1, &EBO);
+	static std::array<unsigned, 6> Elements{{ 0, 1, 2, 2, 3, 0 }};
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Elements), Elements.data(),
+		GL_STATIC_DRAW);
+
 	glBindBuffer(GL_ARRAY_BUFFER, TriangleVBO);
 	glUseProgram(ShaderProgram);
 
@@ -119,7 +129,7 @@ int main() {
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(Window);
 		glfwPollEvents();
