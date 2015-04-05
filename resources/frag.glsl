@@ -6,5 +6,5 @@ out vec4 outColor;
 
 void main()
 {
-  outColor = vec4(Color, triangleAlpha);
+  outColor = vec4(Color, 1.f);
 }
