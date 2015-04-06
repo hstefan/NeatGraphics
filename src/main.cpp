@@ -6,6 +6,7 @@
 #include <cmath>
 #include "GL/gl3w.h"
 #include "GLFW/glfw3.h"
+#include "mat.hpp"
 
 std::string get_file_contents(std::string filename) {
 	auto Fin = std::ifstream{ filename, std::ios::in | std::ios::binary };
@@ -124,6 +125,16 @@ int main() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, TriangleVBO);
 	glUseProgram(ShaderProgram);
+
+	math::mat4 Transform {
+	    1.f, 0.f, 0.f, 0.f,
+	    0.f, 1.f, 0.f, 0.f,
+	    0.f, 0.f, 1.f, 0.f,
+	    0.f, 0.f, 0.f, 1.f,
+	};
+
+	auto TransformUni = glGetUniformLocation(ShaderProgram, "transform");
+	glUniformMatrix4fv(TransformUni, 1, GL_FALSE, Transform.data());
 
 	while (!glfwWindowShouldClose(Window)) {
 		glClearColor(0.f, 0.f, 0.f, 1.f);
