@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.0)
 project(NeatGraphics)
 
 if (NOT MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -lc++abi")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -stdlib=libc++ -lc++abi")
 endif()
 
 add_definitions(${CXX_COMPILE_FLAGS})
