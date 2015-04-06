@@ -3,6 +3,7 @@ set(SOURCE
 )
 
 set(HEADER
+  mat.hpp
 )
 
 add_executable(NeatGraphics ${SOURCE} ${HEADER})
