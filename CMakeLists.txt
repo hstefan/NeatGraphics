@@ -26,6 +26,15 @@ if (ENABLE_GLFW)
   link_directories(${GLFW_LIBRARY_DIRS})
 endif()
 
+add_custom_target(run
+    COMMAND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}NeatGraphics
+    DEPENDS NeatGraphics
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 include_directories(src)
 include_directories(${CMAKE_SOURCE_DIR}/external/gl3w/include)
 include_directories(${OPENGL_INCLUDE_DIR})
