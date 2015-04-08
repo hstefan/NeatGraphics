@@ -41,62 +41,61 @@ mat<T, N, M> transpose(const mat<T, M, N>& m);
 
 template <class T, unsigned M, unsigned N>
 struct mat {
-    //static definitions
-    typedef T value_type;
-    typedef std::array<T, N * M> container;
-    static const auto width = N;
-    static const auto height = M;
+	//static definitions
+	typedef T value_type;
+	typedef std::array<T, N * M> container;
+	static const auto width = N;
+	static const auto height = M;
 
-    //constructors
-    template <class ...E>
-    mat(E&&... d);
+	//constructors
+	template <class ...E>
+	mat(E&&... d);
 
-    mat();
+	mat();
 
-    //access operator
-    value_type& operator() (unsigned i, unsigned j);
-    const value_type& operator() (unsigned i, unsigned j) const;
-    //raw-indexed operator
-    value_type& operator[] (unsigned e);
-    const value_type& operator[] (unsigned e) const;
+	//access operator
+	value_type& operator() (unsigned i, unsigned j);
+	const value_type& operator() (unsigned i, unsigned j) const;
+	//raw-indexed operator
+	value_type& operator[] (unsigned e);
+	const value_type& operator[] (unsigned e) const;
 
-    decltype(auto) data();
+	decltype(auto) data();
 private:
-    
-    container _data;
+	container _data;
 };
 
 template <class T, unsigned M, unsigned N>
 template <class ...E>
 mat<T, M, N>::mat(E&&... d)
-    : _data{ std::forward<E>(d)... } {
+	: _data{ std::forward<E>(d)... } {
 }
 
 template <class T, unsigned M, unsigned N>
-mat<T, M, N>::mat() {
+	mat<T, M, N>::mat() {
 }
 
 template <class T, unsigned M, unsigned N>
 typename mat<T, M, N>::value_type& mat<T, M, N>::operator() (unsigned i, unsigned j) {
-    return _data[i * N + j];
+	return _data[i * N + j];
 }
 
 
 template <class T, unsigned M, unsigned N>
 const typename mat<T, M, N>::value_type& mat<T, M, N>::operator() (unsigned i, unsigned j) const {
-    return _data[i * N + j];
+	return _data[i * N + j];
 }
 
 
 template <class T, unsigned M, unsigned N>
 typename mat<T, M, N>::value_type& mat<T, M, N>::operator[] (unsigned e) {
-    return _data[e];
+	return _data[e];
 }
 
 
 template <class T, unsigned M, unsigned N>
 const typename mat<T, M, N>::value_type& mat<T, M, N>::operator[] (unsigned e) const {
-    return _data[e];
+	return _data[e];
 }
 
 template <class T, unsigned M, unsigned N>
