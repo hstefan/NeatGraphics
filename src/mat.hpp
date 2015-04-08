@@ -158,9 +158,6 @@ mat<T, N, M> transpose(const mat<T, M, N>& m) {
 	return r;
 }
 
-    return r;
-}
-
 template<class T, unsigned M, unsigned N>
 std::ostream& operator<<(std::ostream& stream, const mat<T, M, N>& mat) {
 	stream << "mat<" << M << ',' <<  N << ">: " << std::endl;
