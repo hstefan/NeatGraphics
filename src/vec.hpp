@@ -5,15 +5,15 @@
 
 namespace math {
 
-typedef mat<float, 2, 1> vec2;
-typedef mat<float, 3, 1> vec3;
-typedef mat<float, 4, 1> vec4;
-typedef mat<double, 2, 1> vecd2;
-typedef mat<double, 3, 1> vecd3;
-typedef mat<double, 4, 1> vecd4;
+typedef mat<2, 1> vec2;
+typedef mat<3, 1> vec3;
+typedef mat<4, 1> vec4;
+typedef mat<2, 1, double> vecd2;
+typedef mat<3, 1, double> vecd3;
+typedef mat<4, 1, double> vecd4;
 
 template <class T, unsigned D>
-T norm(const mat<T, D, 1>& m) {
+T norm(const mat<D, 1, T>& m) {
 	T acc(0);
 	for (int i = 0; i < D; ++i) {
 		acc += m(i, 0) * m(i, 0);
@@ -22,10 +22,10 @@ T norm(const mat<T, D, 1>& m) {
 }
 
 template <class T, unsigned D>
-mat<T, D, 1> normalize(const mat<T, D, 1>& v) {
+mat<D, 1, T> normalize(const mat<D, 1, T>& v) {
 	return T(1) / norm(v) * v;
 }
 
 vec3 cross(const vec3& v, const vec3& w);
 
-}
+} //namespace math

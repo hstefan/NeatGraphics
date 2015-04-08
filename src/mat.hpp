@@ -5,41 +5,22 @@
 
 namespace math {
 
-template <class T, unsigned M, unsigned N>
+template <unsigned M, unsigned N = M, class T = float>
 struct mat;
 
 //handy typedefs
-typedef mat<float, 2U, 2U> mat2;
-typedef mat<float, 3U, 3U> mat3;
-typedef mat<float, 4U, 4U> mat4;
-typedef mat<double, 2U, 2U> matd2;
-typedef mat<double, 3U, 3U> matd3;
-typedef mat<double, 4U, 4U> matd4;
-
-//overloaded operators
-template<class T, unsigned M, unsigned N>
-mat<T, M, N> operator+(const mat<T, M, N>& lhs, const mat<T, M, N>& rhs);
-
-template<class T, unsigned M, unsigned N>
-mat<T, M, N> operator-(const mat<T, M, N>& lhs, const mat<T, M, N>& rhs);
-
-template<class T, unsigned M, unsigned N>
-mat<T, M, N> operator*(const mat<T, M, N>& m, float scalar);
-
-template<class T, unsigned M, unsigned N>
-mat<T, M, N> operator*(float scalar, const mat<T, N, M>& m);
-
-template<class T, unsigned M, unsigned N, unsigned P>
-mat<T, N, P> operator*(const mat<T, M, N>& lhs, const mat<T, N, P>& rhs);
-
-template<class T, unsigned M, unsigned N>
-std::ostream& operator<<(std::ostream& stream, const mat<T, M, N>& mat);
+typedef mat<2U> mat2;
+typedef mat<3U> mat3;
+typedef mat<4U> mat4;
+typedef mat<2U, 2U, double> matd2;
+typedef mat<3U, 3U, double> matd3;
+typedef mat<4U, 4U, double> matd4;
 
 //utility functions
-template<class T, unsigned M, unsigned N>
-mat<T, N, M> transpose(const mat<T, M, N>& m);
+template <unsigned M, unsigned N = M, class T = float>
+mat<N, M, T> transpose(const mat<M, N, T>& m);
 
-template <class T, unsigned M, unsigned N>
+template <unsigned M, unsigned N, class T>
 struct mat {
 	//static definitions
 	typedef T value_type;
@@ -65,77 +46,77 @@ private:
 	container _data;
 };
 
-template <class T, unsigned M, unsigned N>
+template <unsigned M, unsigned N, class T>
 template <class ...E>
-mat<T, M, N>::mat(E&&... d)
+mat<M, N, T>::mat(E&&... d)
 	: _data{ std::forward<E>(d)... } {
 }
 
-template <class T, unsigned M, unsigned N>
-	mat<T, M, N>::mat() {
+template <unsigned M, unsigned N, class T>
+mat<M, N, T>::mat() {
 }
 
-template <class T, unsigned M, unsigned N>
-typename mat<T, M, N>::value_type& mat<T, M, N>::operator() (unsigned i, unsigned j) {
+template <unsigned M, unsigned N, class T>
+typename mat<M, N, T>::value_type& mat<M, N, T>::operator() (unsigned i, unsigned j) {
 	return _data[i * N + j];
 }
 
 
-template <class T, unsigned M, unsigned N>
-const typename mat<T, M, N>::value_type& mat<T, M, N>::operator() (unsigned i, unsigned j) const {
+template <unsigned M, unsigned N, class T>
+const typename mat<M, N, T>::value_type& mat<M, N, T>::operator() (unsigned i, unsigned j) const {
 	return _data[i * N + j];
 }
 
 
-template <class T, unsigned M, unsigned N>
-typename mat<T, M, N>::value_type& mat<T, M, N>::operator[] (unsigned e) {
+template <unsigned M, unsigned N, class T>
+typename mat<M, N, T>::value_type& mat<M, N, T>::operator[] (unsigned e) {
 	return _data[e];
 }
 
 
-template <class T, unsigned M, unsigned N>
-const typename mat<T, M, N>::value_type& mat<T, M, N>::operator[] (unsigned e) const {
+template <unsigned M, unsigned N, class T>
+const typename mat<M, N, T>::value_type& mat<M, N, T>::operator[] (unsigned e) const {
 	return _data[e];
 }
 
-template <class T, unsigned M, unsigned N>
-decltype(auto) mat<T, M, N>::data() { return _data.data(); }
+template <unsigned M, unsigned N, class T>
+decltype(auto) mat<M, N, T>::data() { return _data.data(); }
 
-template<class T, unsigned M, unsigned N>
-mat<T, M, N> operator+(const mat<T, M, N>& lhs, const mat<T, M, N>& rhs) {
-	mat<T, N, M> r;
+template <unsigned M, unsigned N, class T>
+mat<M, N, T> operator+(const mat<M, N, T>& lhs, const mat<M, N, T>& rhs) {
+	mat<M, N, T> r;
 	for (unsigned i = 0; i < N * M; ++i) {
 		r[i] = lhs[i] + rhs[i];
 	}
 	return r;
 }
 
-template<class T, unsigned M, unsigned N>
-mat<T, N, M> operator-(const mat<T, N, M>& lhs, const mat<T, N, M>& rhs) {
-	mat<T, N, M> r;
+template <unsigned M, unsigned N, class T>
+mat<M, N, T> operator-(const mat<M, N, T>& lhs, const mat<M, N, T>& rhs) {
+	mat<M, N, T> r;
 	for (auto i = 0U; i < N * M; ++i) {
 		r[i] = lhs[i] - rhs[i];
 	}
 	return r;
 }
 
-template<class T, unsigned M, unsigned N>
-mat<T, N, M> operator*(const mat<T, N, M>& m, float scalar) {
-	mat<T, N, M> r;
+template <unsigned M, unsigned N, class T>
+mat<M, N, T> operator*(const mat<M, N, T>& m, float scalar) {
+	mat<M, N, T> r;
 	for (auto i = 0U; i < N * M; ++i) {
 		r[i] = m[i] * scalar;
 	}
 	return r;
 }
 
-template<class T, unsigned M, unsigned N>
-mat<T, N, M> operator*(float scalar, const mat<T, N, M>& m) {
+template <unsigned M, unsigned N, class T>
+mat<M, N, T> operator*(float scalar, const mat<M, N, T>& m) {
 	return m * scalar;
 }
 
-template<class T, unsigned M, unsigned N, unsigned P>
-mat<T, N, P> operator*(const mat<T, M, N>& lhs, const mat<T, N, P>& rhs) {
-	mat<T, N, P> r;
+template <unsigned M, unsigned N, unsigned P, class T>
+mat<N, P, T> operator*(const mat<M, N, T>& lhs, const mat<N, P, T>& rhs) {
+	mat<N, P, T> r;
 	for (auto i = 0U; i < M; ++i) {
 		for (auto j = 0U; j < P; ++j) {
 			r(i, j) = 0;
@@ -147,9 +128,9 @@ mat<T, N, P> operator*(const mat<T, M, N>& lhs, const mat<T, N, P>& rhs) {
 	return r;
 }
 
-template<class T, unsigned M, unsigned N>
-mat<T, N, M> transpose(const mat<T, M, N>& m) {
-	mat<T, N, M> r;
+template <unsigned M, unsigned N, class T>
+mat<N, M, T> transpose(const mat<M, N, T>& m) {
+	mat<N, M, T> r;
 	for (auto i = 0U; i < N; ++i) {
 		for (auto j = 0U; j < M; ++j) {
 			r(i, j) = m(j, i);
@@ -158,8 +139,8 @@ mat<T, N, M> transpose(const mat<T, M, N>& m) {
 	return r;
 }
 
-template<class T, unsigned M, unsigned N>
-std::ostream& operator<<(std::ostream& stream, const mat<T, M, N>& mat) {
+template <unsigned M, unsigned N, class T>
+std::ostream& operator<<(std::ostream& stream, const mat<M, N, T>& mat) {
 	stream << "mat<" << M << ',' <<  N << ">: " << std::endl;
 	for (auto i = 0U; i < M; ++i) {
 		for (auto j = 0U; j < N; ++j) {
