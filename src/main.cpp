@@ -7,6 +7,7 @@
 #include "GL/gl3w.h"
 #include "GLFW/glfw3.h"
 #include "mat.hpp"
+#include "vec.hpp"
 
 std::string get_file_contents(std::string filename) {
 	auto Fin = std::ifstream{ filename, std::ios::in | std::ios::binary };
@@ -133,8 +134,9 @@ int main() {
 		0.f, 0.f, 0.f, 1.f,
 	};
 
-	math::vec3 v = { 1.f, 0.f, 0.f };
-	std::cout << "Norm of " << v << "is " << math::norm(v) << std::endl;
+	auto vec_i = math::vec3 { 1.0f, 0.0f, 0.0f };
+	auto vec_j = math::vec3 { 0.0f, 1.0f, 0.0f };
+	std::cout << math::cross(vec_i, vec_j) << std::endl;
 
 	auto TransformUni = glGetUniformLocation(ShaderProgram, "transform");
 	glUniformMatrix4fv(TransformUni, 1, GL_FALSE, Transform.data());

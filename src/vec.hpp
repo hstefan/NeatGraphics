@@ -26,6 +26,6 @@ mat<D, 1, T> normalize(const mat<D, 1, T>& v) {
 	return T(1) / norm(v) * v;
 }
 
-vec3 cross(const vec3& v, const vec3& w);
+vec3 cross(const vec3& u, const vec3& v);
 
 } //namespace math

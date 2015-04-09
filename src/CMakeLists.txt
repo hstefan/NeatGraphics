@@ -1,9 +1,11 @@
 set(SOURCE
 	main.cpp
+	vec.cpp
 	)
 
 set(HEADER
 	mat.hpp
+	vec.hpp
 	)
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCE} ${HEADER})
