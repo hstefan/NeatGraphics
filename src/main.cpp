@@ -9,6 +9,7 @@
 #include "mat.hpp"
 #include "vec.hpp"
 #include "ArrayBuffer.hpp"
+#include "GLDebug.hpp"
 
 std::string get_file_contents(std::string filename) {
 	auto Fin = std::ifstream{ filename, std::ios::in | std::ios::binary };

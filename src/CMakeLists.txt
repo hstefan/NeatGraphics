@@ -8,6 +8,7 @@ set(HEADER
 	mat.hpp
 	vec.hpp
 	ArrayBuffer.hpp
+	GLDebug.hpp
 	)
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCE} ${HEADER})

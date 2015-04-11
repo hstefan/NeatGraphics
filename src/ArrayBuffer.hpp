@@ -2,6 +2,7 @@
 
 #include <array>
 #include "GL/gl3w.h"
+#include "GLDebug.hpp"
 
 namespace cg {
 
@@ -33,6 +34,7 @@ void ArrayBuffer::bufferData(const T& data) {
 		bind();
 	}
 	glBufferData(GL_ARRAY_BUFFER, sizeof(data), data.data(), GL_STATIC_DRAW);
+	dbg::checkErrors();
 }
 
 } //namespace cg
