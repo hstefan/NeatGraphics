@@ -1,11 +1,13 @@
 set(SOURCE
 	main.cpp
 	vec.cpp
+	ArrayBuffer.cpp
 	)
 
 set(HEADER
 	mat.hpp
 	vec.hpp
+	ArrayBuffer.hpp
 	)
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCE} ${HEADER})

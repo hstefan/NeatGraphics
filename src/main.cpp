@@ -8,6 +8,7 @@
 #include "GLFW/glfw3.h"
 #include "mat.hpp"
 #include "vec.hpp"
+#include "ArrayBuffer.hpp"
 
 std::string get_file_contents(std::string filename) {
 	auto Fin = std::ifstream{ filename, std::ios::in | std::ios::binary };
@@ -20,18 +21,14 @@ std::string get_file_contents(std::string filename) {
 	return Contents;
 }
 
-GLuint make_triangle() {
+cg::ArrayBuffer make_triangle() {
 	static auto Vertices = std::array<float, 20> {{
 		-0.5f, 0.5f, 1.0f, 0.0f, 0.0f, //top-left
 		0.5f,  0.5f, 0.0f, 1.0f, 0.0f, //top-right
 		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, //bottom-right
 		-0.5f, -0.5f, 1.0f, 1.0f, 1.0f, //bottom-left
 	}};
-	GLuint VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices.data(), GL_STATIC_DRAW);
-	return VBO;
+	return cg::ArrayBuffer{ Vertices };
 }
 
 bool check_and_report_shader_compile(const GLuint shader) {
@@ -111,7 +108,7 @@ int main() {
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	const auto TriangleVBO = make_triangle();
+	auto TriangleVBO = make_triangle();
 	const auto VertexShader = make_shader(GL_VERTEX_SHADER, "resources/vertex.glsl");
 	const auto FragShader = make_shader(GL_FRAGMENT_SHADER, "resources/frag.glsl");
 	const auto ShaderProgram = make_program(VertexShader, FragShader);
@@ -124,7 +121,7 @@ int main() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Elements), Elements.data(),
 			GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ARRAY_BUFFER, TriangleVBO);
+	TriangleVBO.bind();
 	glUseProgram(ShaderProgram);
 
 	math::mat4 Transform {
@@ -158,7 +155,6 @@ int main() {
 	glDeleteProgram(ShaderProgram);
 	glDeleteShader(VertexShader);
 	glDeleteShader(FragShader);
-	glDeleteBuffers(1, &TriangleVBO);
 	glDeleteVertexArrays(1, &VAO);
 
 	glfwTerminate();
