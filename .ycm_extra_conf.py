@@ -51,7 +51,8 @@ flags = [
 '-std=c++14',
 '-stdlib=libc++',
 pkg_config('glfw3'),
-'-Iexternal/gl3w/include'
+'-Iexternal/gl3w/include',
+'-Isrc'
 ]
 
 
