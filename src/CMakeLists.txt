@@ -2,6 +2,7 @@ set(SOURCE
     main.cpp
     vec.cpp
     ArrayBuffer.cpp
+    ShaderProgram.cpp
     )
 
 set(HEADER
@@ -9,6 +10,7 @@ set(HEADER
     vec.hpp
     ArrayBuffer.hpp
     GLDebug.hpp
+    ShaderProgram.hpp
     )
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCE} ${HEADER})

@@ -9,6 +9,7 @@
 #include "mat.hpp"
 #include "vec.hpp"
 #include "ArrayBuffer.hpp"
+#include "ShaderProgram.hpp"
 #include "GLDebug.hpp"
 
 std::string get_file_contents(std::string filename) {
@@ -56,33 +57,23 @@ GLuint make_shader(GLenum shaderType, std::string sourcePath) {
     return Shader;
 }
 
-GLuint make_program(GLuint vertexShader, GLuint fragmentShader) {
-    auto ShaderProgram = glCreateProgram();
-    glAttachShader(ShaderProgram, vertexShader);
-    glAttachShader(ShaderProgram, fragmentShader);
+cg::ShaderProgram make_program(GLuint vertexShader, GLuint fragmentShader) {
+    auto shaderProgram = cg::ShaderProgram{};
+    shaderProgram.attachShader(vertexShader);
+    shaderProgram.attachShader(fragmentShader);
+    shaderProgram.bindFragDataLocation(0, "outColor");
+    shaderProgram.link();
 
-    glBindFragDataLocation(ShaderProgram, 0, "outColor");
-    glLinkProgram(ShaderProgram);
-
-    GLint Status;
-    glGetProgramiv(ShaderProgram, GL_LINK_STATUS, &Status);
-    if (Status == GL_FALSE) {
-        auto MsgBuffer = std::array<char, 512>();
-        glGetProgramInfoLog(ShaderProgram, MsgBuffer.size(), nullptr,
-                            &MsgBuffer[0]);
-        std::cerr << MsgBuffer.data() << std::endl;
-    }
-
-    auto PosAttrib = glGetAttribLocation(ShaderProgram, "position");
+    auto PosAttrib = glGetAttribLocation(shaderProgram, "position");
     glEnableVertexAttribArray(PosAttrib);
     glVertexAttribPointer(PosAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
                           0);
 
-    auto ColorAttrib = glGetAttribLocation(ShaderProgram, "color");
+    auto ColorAttrib = glGetAttribLocation(shaderProgram, "color");
     glEnableVertexAttribArray(ColorAttrib);
     glVertexAttribPointer(ColorAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
                           (void*)(2 * sizeof(float)));
-    return ShaderProgram;
+    return shaderProgram;
 }
 
 int main() {
@@ -115,7 +106,7 @@ int main() {
         make_shader(GL_VERTEX_SHADER, "resources/vertex.glsl");
     const auto FragShader =
         make_shader(GL_FRAGMENT_SHADER, "resources/frag.glsl");
-    const auto ShaderProgram = make_program(VertexShader, FragShader);
+    const auto shaderProgram = make_program(VertexShader, FragShader);
 
     GLuint EBO;
     glGenBuffers(1, &EBO);
@@ -126,7 +117,7 @@ int main() {
                  GL_STATIC_DRAW);
 
     TriangleVBO.bind();
-    glUseProgram(ShaderProgram);
+    shaderProgram.use();
 
     math::mat4 Transform{
         1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f,
@@ -137,8 +128,8 @@ int main() {
     auto vec_j = math::vec3{0.0f, 1.0f, 0.0f};
     std::cout << math::cross(vec_i, vec_j) << std::endl;
 
-    auto TransformUni = glGetUniformLocation(ShaderProgram, "transform");
-    glUniformMatrix4fv(TransformUni, 1, GL_FALSE, Transform.data());
+    auto transformUni = shaderProgram.getUniformLocation("transform");
+    glUniformMatrix4fv(transformUni, 1, GL_FALSE, Transform.data());
 
     while (!glfwWindowShouldClose(Window)) {
         glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -154,7 +145,6 @@ int main() {
         }
     }
 
-    glDeleteProgram(ShaderProgram);
     glDeleteShader(VertexShader);
     glDeleteShader(FragShader);
     glDeleteVertexArrays(1, &VAO);
