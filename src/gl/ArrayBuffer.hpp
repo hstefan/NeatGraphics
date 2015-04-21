@@ -8,17 +8,18 @@ namespace gl {
 
 struct ArrayBuffer {
     ArrayBuffer();
+    ArrayBuffer(ArrayBuffer&& other);
     template <class T>
     ArrayBuffer(const T& data);
 
     virtual ~ArrayBuffer();
+    operator GLuint() const;
 
     void bind();
     bool bound();
     // we'll probably need something more flexible for this later on
     template <class T>
     void bufferData(const T& data);
-
    private:
     GLuint id;
 };

@@ -2,14 +2,22 @@
 
 using gl::ArrayBuffer;
 
-ArrayBuffer::ArrayBuffer() : id(GL_FALSE) {
+ArrayBuffer::ArrayBuffer() : id(0) {
     glGenBuffers(1, &id);
     dbg::checkErrors();
+}
+
+ArrayBuffer::ArrayBuffer(ArrayBuffer&& other) : id(other.id) {
+    other.id = 0;
 }
 
 ArrayBuffer::~ArrayBuffer() {
     glDeleteBuffers(1, &id);
     dbg::checkErrors();
+}
+
+ArrayBuffer::operator GLuint() const {
+    return id;
 }
 
 void ArrayBuffer::bind() {
