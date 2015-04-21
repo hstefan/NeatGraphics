@@ -3,7 +3,7 @@
 #include "GL/gl3w.h"
 #include <iostream>
 
-namespace cg {
+namespace gl {
 namespace dbg {
 
 inline void checkErrors(std::ostream& output = std::cerr) {

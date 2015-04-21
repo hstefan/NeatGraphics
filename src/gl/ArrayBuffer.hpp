@@ -2,9 +2,9 @@
 
 #include <array>
 #include "GL/gl3w.h"
-#include "GLDebug.hpp"
+#include "gl/GLDebug.hpp"
 
-namespace cg {
+namespace gl {
 
 struct ArrayBuffer {
     ArrayBuffer();
@@ -38,4 +38,4 @@ void ArrayBuffer::bufferData(const T& data) {
     dbg::checkErrors();
 }
 
-}  // namespace cg
+}  // namespace gl

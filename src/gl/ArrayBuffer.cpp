@@ -1,6 +1,6 @@
-#include "ArrayBuffer.hpp"
+#include "gl/ArrayBuffer.hpp"
 
-using namespace cg;
+using gl::ArrayBuffer;
 
 ArrayBuffer::ArrayBuffer() : id(GL_FALSE) {
     glGenBuffers(1, &id);

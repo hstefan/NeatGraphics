@@ -22,4 +22,4 @@ struct ShaderProgram {
     bool linked;
 };
 
-}  // namespace cg
+}  // namespace gl

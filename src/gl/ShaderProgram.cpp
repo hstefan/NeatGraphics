@@ -1,10 +1,10 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
-#include "ShaderProgram.hpp"
-#include "GLDebug.hpp"
+#include "gl/ShaderProgram.hpp"
+#include "gl/GLDebug.hpp"
 
-using cg::ShaderProgram;
+using gl::ShaderProgram;
 
 ShaderProgram::ShaderProgram() : id(0), linked(false) {
     id = glCreateProgram();

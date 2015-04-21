@@ -8,9 +8,11 @@
 #include "GLFW/glfw3.h"
 #include "mat.hpp"
 #include "vec.hpp"
-#include "ArrayBuffer.hpp"
-#include "ShaderProgram.hpp"
-#include "GLDebug.hpp"
+#include "gl/ArrayBuffer.hpp"
+#include "gl/ShaderProgram.hpp"
+
+using gl::ArrayBuffer;
+using gl::ShaderProgram;
 
 std::string get_file_contents(std::string filename) {
     auto Fin = std::ifstream{filename, std::ios::in | std::ios::binary};
@@ -23,14 +25,14 @@ std::string get_file_contents(std::string filename) {
     return Contents;
 }
 
-cg::ArrayBuffer make_triangle() {
+ArrayBuffer make_triangle() {
     static auto Vertices = std::array<float, 20>{{
         -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,  // top-left
         0.5f, 0.5f, 0.0f, 1.0f, 0.0f,  // top-right
         0.5f, -0.5f, 0.0f, 0.0f, 1.0f,  // bottom-right
         -0.5f, -0.5f, 1.0f, 1.0f, 1.0f,  // bottom-left
     }};
-    return cg::ArrayBuffer{Vertices};
+    return ArrayBuffer{Vertices};
 }
 
 bool check_and_report_shader_compile(const GLuint shader) {
@@ -57,8 +59,8 @@ GLuint make_shader(GLenum shaderType, std::string sourcePath) {
     return Shader;
 }
 
-cg::ShaderProgram make_program(GLuint vertexShader, GLuint fragmentShader) {
-    auto shaderProgram = cg::ShaderProgram{};
+ShaderProgram make_program(GLuint vertexShader, GLuint fragmentShader) {
+    auto shaderProgram = ShaderProgram{};
     shaderProgram.attachShader(vertexShader);
     shaderProgram.attachShader(fragmentShader);
     shaderProgram.bindFragDataLocation(0, "outColor");
