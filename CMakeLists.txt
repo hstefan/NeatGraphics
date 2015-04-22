@@ -35,6 +35,7 @@ add_custom_target(run
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include_directories(src)
 include_directories(${CMAKE_SOURCE_DIR}/external/gl3w/include)
