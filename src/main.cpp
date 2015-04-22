@@ -17,24 +17,24 @@ using gl::ShaderProgram;
 using gl::Shader;
 
 std::string get_file_contents(std::string filename) {
-    auto Fin = std::ifstream{filename, std::ios::in | std::ios::binary};
-    std::string Contents;
-    Fin.seekg(0, std::ios::end);
-    Contents.resize(static_cast<unsigned>(Fin.tellg()));
-    Fin.seekg(0, std::ios::beg);
-    Fin.read(&Contents[0], Contents.size());
-    Fin.close();
-    return Contents;
+    auto fin = std::ifstream{filename, std::ios::in | std::ios::binary};
+    std::string contents;
+    fin.seekg(0, std::ios::end);
+    contents.resize(static_cast<unsigned>(fin.tellg()));
+    fin.seekg(0, std::ios::beg);
+    fin.read(&contents[0], contents.size());
+    fin.close();
+    return contents;
 }
 
 ArrayBuffer make_triangle() {
-    static auto Vertices = std::array<float, 20>{{
+    static auto vertices = std::array<float, 20>{{
         -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,   // top-left
         0.5f, 0.5f, 0.0f, 1.0f, 0.0f,    // top-right
         0.5f, -0.5f, 0.0f, 0.0f, 1.0f,   // bottom-right
         -0.5f, -0.5f, 1.0f, 1.0f, 1.0f,  // bottom-left
     }};
-    return ArrayBuffer{Vertices};
+    return ArrayBuffer{vertices};
 }
 
 Shader make_shader(GLenum shaderType, std::string sourcePath) {
@@ -50,14 +50,14 @@ ShaderProgram make_program(GLuint vertexShader, GLuint fragmentShader) {
     shaderProgram.bindFragDataLocation(0, "outColor");
     shaderProgram.link();
 
-    auto PosAttrib = glGetAttribLocation(shaderProgram, "position");
-    glEnableVertexAttribArray(PosAttrib);
-    glVertexAttribPointer(PosAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
+    auto posAttrib = glGetAttribLocation(shaderProgram, "position");
+    glEnableVertexAttribArray(posAttrib);
+    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
                           0);
 
-    auto ColorAttrib = glGetAttribLocation(shaderProgram, "color");
-    glEnableVertexAttribArray(ColorAttrib);
-    glVertexAttribPointer(ColorAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
+    auto colorAttrib = glGetAttribLocation(shaderProgram, "color");
+    glEnableVertexAttribArray(colorAttrib);
+    glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
                           (void*)(2 * sizeof(float)));
     return shaderProgram;
 }
@@ -70,8 +70,8 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-    auto Window = glfwCreateWindow(800, 600, "OpenGL Test", nullptr, nullptr);
-    glfwMakeContextCurrent(Window);
+    auto window = glfwCreateWindow(800, 600, "OpenGL Test", nullptr, nullptr);
+    glfwMakeContextCurrent(window);
 
     if (gl3wInit()) {
         std::cerr << "Failed to initialize OpenGL" << std::endl;
@@ -83,30 +83,30 @@ int main() {
         return -1;
     }
 
-    GLuint VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
-    auto TriangleVBO = make_triangle();
-    const auto VertexShader =
+    auto triangleVBO = make_triangle();
+    const auto vertexShader =
         make_shader(GL_VERTEX_SHADER, "resources/vertex.glsl");
-    const auto FragShader =
+    const auto fragShader =
         make_shader(GL_FRAGMENT_SHADER, "resources/frag.glsl");
-    const auto shaderProgram = make_program(VertexShader, FragShader);
+    const auto shaderProgram = make_program(vertexShader, fragShader);
 
-    GLuint EBO;
-    glGenBuffers(1, &EBO);
+    GLuint ebo;
+    glGenBuffers(1, &ebo);
     static std::array<unsigned, 6> Elements{{0, 1, 2, 2, 3, 0}};
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Elements), Elements.data(),
                  GL_STATIC_DRAW);
 
-    TriangleVBO.bind();
+    triangleVBO.bind();
     shaderProgram.use();
 
     // clang-format off
-    math::mat4 Transform{
+    math::mat4 transform{
         1.f, 0.f, 0.f, 0.f,
         0.f, 1.f, 0.f, 0.f,
         0.f, 0.f, 1.f, 0.f,
@@ -114,30 +114,24 @@ int main() {
     };
     // clang-format on
 
-    auto vec_i = math::vec3{1.0f, 0.0f, 0.0f};
-    auto vec_j = math::vec3{0.0f, 1.0f, 0.0f};
-    std::cout << math::cross(vec_i, vec_j) << std::endl;
-
     auto transformUni = shaderProgram.getUniformLocation("transform");
-    glUniformMatrix4fv(transformUni, 1, GL_FALSE, Transform.data());
+    glUniformMatrix4fv(transformUni, 1, GL_FALSE, transform.data());
 
-    while (!glfwWindowShouldClose(Window)) {
+    while (!glfwWindowShouldClose(window)) {
         glClearColor(0.f, 0.f, 0.f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        glfwSwapBuffers(Window);
+        glfwSwapBuffers(window);
         glfwPollEvents();
 
-        if (glfwGetKey(Window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-            glfwSetWindowShouldClose(Window, GL_TRUE);
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+            glfwSetWindowShouldClose(window, GL_TRUE);
         }
     }
 
-    glDeleteShader(VertexShader);
-    glDeleteShader(FragShader);
-    glDeleteVertexArrays(1, &VAO);
+    glDeleteVertexArrays(1, &vao);
 
     glfwTerminate();
 
