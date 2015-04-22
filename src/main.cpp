@@ -10,9 +10,11 @@
 #include "vec.hpp"
 #include "gl/ArrayBuffer.hpp"
 #include "gl/ShaderProgram.hpp"
+#include "gl/Shader.hpp"
 
 using gl::ArrayBuffer;
 using gl::ShaderProgram;
+using gl::Shader;
 
 std::string get_file_contents(std::string filename) {
     auto Fin = std::ifstream{filename, std::ios::in | std::ios::binary};
@@ -27,36 +29,18 @@ std::string get_file_contents(std::string filename) {
 
 ArrayBuffer make_triangle() {
     static auto Vertices = std::array<float, 20>{{
-        -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,  // top-left
-        0.5f, 0.5f, 0.0f, 1.0f, 0.0f,  // top-right
-        0.5f, -0.5f, 0.0f, 0.0f, 1.0f,  // bottom-right
+        -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,   // top-left
+        0.5f, 0.5f, 0.0f, 1.0f, 0.0f,    // top-right
+        0.5f, -0.5f, 0.0f, 0.0f, 1.0f,   // bottom-right
         -0.5f, -0.5f, 1.0f, 1.0f, 1.0f,  // bottom-left
     }};
     return ArrayBuffer{Vertices};
 }
 
-bool check_and_report_shader_compile(const GLuint shader) {
-    GLint Status;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &Status);
-    if (Status == GL_FALSE) {
-        auto MsgBuffer = std::array<char, 512>();
-        glGetShaderInfoLog(shader, MsgBuffer.size(), nullptr, &MsgBuffer[0]);
-        std::cerr << MsgBuffer.data() << std::endl;
-    }
-    return Status == GL_TRUE;
-}
-
-GLuint make_shader(GLenum shaderType, std::string sourcePath) {
-    auto Shader = glCreateShader(shaderType);
-    const auto ShaderSource = get_file_contents(sourcePath);
-    const auto ShaderContent = ShaderSource.c_str();
-
-    glShaderSource(Shader, 1, &ShaderContent, nullptr);
-    glCompileShader(Shader);
-
-    check_and_report_shader_compile(Shader);
-
-    return Shader;
+Shader make_shader(GLenum shaderType, std::string sourcePath) {
+    const auto shaderSource = get_file_contents(sourcePath);
+    auto shader = Shader{shaderType, shaderSource};
+    return shader;
 }
 
 ShaderProgram make_program(GLuint vertexShader, GLuint fragmentShader) {
@@ -121,10 +105,14 @@ int main() {
     TriangleVBO.bind();
     shaderProgram.use();
 
+    // clang-format off
     math::mat4 Transform{
-        1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f,
-        0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f,
+        1.f, 0.f, 0.f, 0.f,
+        0.f, 1.f, 0.f, 0.f,
+        0.f, 0.f, 1.f, 0.f,
+        0.f, 0.f, 0.f, 1.f,
     };
+    // clang-format on
 
     auto vec_i = math::vec3{1.0f, 0.0f, 0.0f};
     auto vec_j = math::vec3{0.0f, 1.0f, 0.0f};
