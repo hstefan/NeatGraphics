@@ -6,8 +6,8 @@
 #include <cmath>
 #include "GL/gl3w.h"
 #include "GLFW/glfw3.h"
-#include "mat.hpp"
-#include "vec.hpp"
+#include "math/mat.hpp"
+#include "math/vec.hpp"
 #include "gl/ArrayBuffer.hpp"
 #include "gl/ShaderProgram.hpp"
 #include "gl/Shader.hpp"

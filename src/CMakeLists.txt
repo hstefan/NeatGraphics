@@ -1,14 +1,14 @@
 set(SOURCE
     main.cpp
-    vec.cpp
+    math/vec.cpp
     gl/ArrayBuffer.cpp
     gl/ShaderProgram.cpp
     gl/Shader.cpp
     )
 
 set(HEADER
-    mat.hpp
-    vec.hpp
+    math/mat.hpp
+    math/vec.hpp
     gl/ArrayBuffer.hpp
     gl/GLDebug.hpp
     gl/ShaderProgram.hpp
