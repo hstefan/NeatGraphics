@@ -9,6 +9,7 @@ set(SOURCE
 set(HEADER
     math/mat.hpp
     math/vec.hpp
+    math/transform.hpp
     gl/ArrayBuffer.hpp
     gl/GLDebug.hpp
     gl/ShaderProgram.hpp

@@ -4,10 +4,12 @@
 #include <fstream>
 #include <streambuf>
 #include <cmath>
+#include <chrono>
 #include "GL/gl3w.h"
 #include "GLFW/glfw3.h"
 #include "math/mat.hpp"
 #include "math/vec.hpp"
+#include "math/transform.hpp"
 #include "gl/ArrayBuffer.hpp"
 #include "gl/ShaderProgram.hpp"
 #include "gl/Shader.hpp"
@@ -105,22 +107,29 @@ int main() {
     triangleVBO.bind();
     shaderProgram.use();
 
-    // clang-format off
-    math::mat4 transform{
-        1.f, 0.f, 0.f, 0.f,
-        0.f, 1.f, 0.f, 0.f,
-        0.f, 0.f, 1.f, 0.f,
-        0.f, 0.f, 0.f, 1.f,
-    };
-    // clang-format on
+    auto transform = math::identity();
 
     auto transformUni = shaderProgram.getUniformLocation("transform");
-    glUniformMatrix4fv(transformUni, 1, GL_FALSE, transform.data());
+
+    auto tStart = std::chrono::high_resolution_clock::now();
+    auto tNow = std::chrono::high_resolution_clock::now();
+    auto time = 0.0f;
+    auto scaledMat = math::mat4{};
+    auto scale = 1.0f;
 
     while (!glfwWindowShouldClose(window)) {
+        tNow = std::chrono::high_resolution_clock::now();
+        time = std::chrono::duration_cast<std::chrono::duration<float>>(
+                   tNow - tStart).count();
+
         glClearColor(0.f, 0.f, 0.f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        scale = std::sin(3.0f * time) + 1.0f;
+        scaledMat = transform * math::scale(scale, scale, 1.0f);
+
+        glUniformMatrix4fv(transformUni, 1, GL_FALSE,
+                           (transform * scaledMat).data());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
