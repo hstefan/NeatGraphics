@@ -2,6 +2,7 @@
 
 #include <string>
 #include "GL/gl3w.h"
+#include "util/NonCopyable.hpp"
 
 namespace gl {
 
@@ -14,6 +15,7 @@ struct Shader {
     bool compile();
 
    private:
+    NONCOPYABLE(Shader);
     GLuint id;
 };
 

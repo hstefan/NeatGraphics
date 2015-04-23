@@ -1,7 +1,8 @@
 #pragma once
 
-#include "GL/gl3w.h"
 #include <array>
+#include "GL/gl3w.h"
+#include "util/NonCopyable.hpp"
 
 namespace gl {
 
@@ -18,6 +19,7 @@ struct ShaderProgram {
     void use() const;
     GLuint getUniformLocation(const char* name) const;
    private:
+    NONCOPYABLE(ShaderProgram);
     GLuint id;
     bool linked;
 };

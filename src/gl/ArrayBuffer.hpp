@@ -3,6 +3,7 @@
 #include <array>
 #include "GL/gl3w.h"
 #include "gl/GLDebug.hpp"
+#include "util/NonCopyable.hpp"
 
 namespace gl {
 
@@ -21,6 +22,7 @@ struct ArrayBuffer {
     template <class T>
     void bufferData(const T& data);
    private:
+    NONCOPYABLE(ArrayBuffer);
     GLuint id;
 };
 
